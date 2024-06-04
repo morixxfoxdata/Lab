@@ -39,20 +39,20 @@ output_vector = observation_matrix @ original_signal
 
 
 # パラメータ設定
-lambda_ = 0.2  # 正則化パラメータ
-t = 0.0009      # ステップサイズ（適切に選ばないと収束しにくいので注意）
-num_iterations = 10000  # 反復回数
+lambda_ = 1  # 正則化パラメータ
+t = 0.001      # ステップサイズ（適切に選ばないと収束しにくいので注意）
+num_iterations = 100000  # 反復回数
 # ISTAを実行
 x_estimated = ista(observation_matrix, output_vector, lambda_, num_iterations, t)
 
 
-def plot_signals(type, original_signal, predicted_signal):
+def plot_signals(type, original_signal, predicted_signal, num_iterations):
     indices = np.arange(len(original_signal))  # 信号のインデックス
 
     plt.figure(figsize=(15, 5))
     plt.stem(indices, original_signal, linefmt='b-', markerfmt='bo', basefmt='r-', label='Original Signal')
     plt.stem(indices, predicted_signal, linefmt='g-', markerfmt='gx', basefmt='r-', label='Predicted Signal')
-    plt.title(f'Comparison of Original and {type} Predicted Signals')
+    plt.title(f'Comparison of Original and {type} Predicted Signals. iter={num_iterations}')
     plt.xlabel('Index')
     plt.ylabel('Signal Magnitude')
     plt.legend()
@@ -62,4 +62,4 @@ def plot_signals(type, original_signal, predicted_signal):
 if __name__ == "__main__":
     # print("真の係数:", original_signal)
     # print("推定係数:", x_estimated)
-    plot_signals("ISTA", original_signal, x_estimated)
+    plot_signals("ISTA", original_signal, x_estimated, num_iterations=num_iterations)
