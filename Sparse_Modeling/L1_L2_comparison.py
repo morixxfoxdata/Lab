@@ -15,10 +15,10 @@ non_zero_indices = np.random.choice(N, non_zero_elements, replace=False)
 original_signal[non_zero_indices] = np.random.randn(non_zero_elements)
 
 # 1000, 100の観測行列を生成(各要素は正規分布に従う)
-observation_matrix = np.random.randn(N, M)
+observation_matrix = np.random.randn(M, N)
 
 # 出力ベクトルを計算(行列積)
-output_vector = observation_matrix.T @ original_signal
+output_vector = observation_matrix @ original_signal
 
 """
 基底追跡(L1)によって推定する
