@@ -37,8 +37,8 @@ cons = ({'type': 'eq', 'fun': lambda x:  np.dot(observation_matrix.T, x) - outpu
 # x0 = np.zeros(1000)
 x0 = np.random.randn(N)  # 初期値をランダムに設定してみる
 # 最適化実行
-# res_l1 = minimize(l1_norm, x0, method='SLSQP', constraints=cons)
-# res_l2 = minimize(l2_norm, x0, method='SLSQP', constraints=cons)
+res_l1 = minimize(l1_norm, x0, method='SLSQP', constraints=cons)
+res_l2 = minimize(l2_norm, x0, method='SLSQP', constraints=cons)
 
 
 # print(output_vector.shape)
