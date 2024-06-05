@@ -7,7 +7,7 @@ def admm_lasso(A, y, lambda_, rho, max_iter=100):
     m, n = A.shape
     x = np.zeros(n)
     z = np.zeros(n)
-    u = np.zeros(n)
+    v = np.zeros(n)
     
     A_T_A = A.T @ A
     A_T_y = A.T @ y
@@ -15,11 +15,11 @@ def admm_lasso(A, y, lambda_, rho, max_iter=100):
 
     for _ in range(max_iter):
         # x update (solve linear system)
-        x = L @ (A_T_y + rho * (z - u))
+        x = L @ (A_T_y + rho * (z - v))
         # z update (soft thresholding)
-        z = soft_thresholding(x + u, lambda_ / rho)
+        z = soft_thresholding(x + v, lambda_ / rho)
         # u update (Lagrange multiplier)
-        u += x - z
+        v += x - z
     
     return x
 
