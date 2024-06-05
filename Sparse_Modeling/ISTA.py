@@ -10,7 +10,25 @@ def ista(A, y, lambda_, num_iterations, t):
         x = soft_thresholding(x - t * gradient, lambda_ * t)
     return x
 
+def admm_lasso(A, y, lambda_, rho, max_iter=100):
+    m, n = A.shape
+    x = np.zeros(n)
+    z = np.zeros(n)
+    u = np.zeros(n)
+    
+    A_T_A = A.T @ A
+    A_T_y = A.T @ y
+    L = np.linalg.inv(A_T_A + rho * np.eye(n))  # Precompute the matrix inverse
 
+    for _ in range(max_iter):
+        # x update (solve linear system)
+        x = L @ (A_T_y + rho * (z - u))
+        # z update (soft thresholding)
+        z = soft_thresholding(x + u, lambda_ / rho)
+        # u update (Lagrange multiplier)
+        u += x - z
+    
+    return x
 
 # テストデータ生成（例）
 np.random.seed(0)
@@ -41,10 +59,10 @@ output_vector = observation_matrix @ original_signal
 # パラメータ設定
 lambda_ = 1  # 正則化パラメータ
 t = 0.001      # ステップサイズ（適切に選ばないと収束しにくいので注意）
-num_iterations = 100000  # 反復回数
+num_iterations = 100  # 反復回数
 # ISTAを実行
-x_estimated = ista(observation_matrix, output_vector, lambda_, num_iterations, t)
-
+x_estimated_ista = ista(observation_matrix, output_vector, lambda_=1, num_iterations=num_iterations, t=0.001)
+x_estimated_ADMM = admm_lasso(observation_matrix, output_vector, lambda_=1, rho=1)
 
 def plot_signals(type, original_signal, predicted_signal, num_iterations):
     indices = np.arange(len(original_signal))  # 信号のインデックス
@@ -52,7 +70,7 @@ def plot_signals(type, original_signal, predicted_signal, num_iterations):
     plt.figure(figsize=(15, 5))
     plt.stem(indices, original_signal, linefmt='b-', markerfmt='bo', basefmt='r-', label='Original Signal')
     plt.stem(indices, predicted_signal, linefmt='g-', markerfmt='gx', basefmt='r-', label='Predicted Signal')
-    plt.title(f'Comparison of Original and {type} Predicted Signals. iter={num_iterations}')
+    plt.title(f'Comparison between Original and {type} Predicted Signals. iter={num_iterations}')
     plt.xlabel('Index')
     plt.ylabel('Signal Magnitude')
     plt.legend()
@@ -62,4 +80,5 @@ def plot_signals(type, original_signal, predicted_signal, num_iterations):
 if __name__ == "__main__":
     # print("真の係数:", original_signal)
     # print("推定係数:", x_estimated)
-    plot_signals("ISTA", original_signal, x_estimated, num_iterations=num_iterations)
+    plot_signals("ISTA", original_signal, x_estimated_ista, num_iterations=num_iterations)
+    plot_signals("ADMM", original_signal, x_estimated_ADMM, num_iterations=num_iterations)
