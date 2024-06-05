@@ -57,7 +57,7 @@ output_vector = observation_matrix @ original_signal
 
 
 # パラメータ設定
-lambda_ = 1  # 正則化パラメータ
+lambda_ = 0.1  # 正則化パラメータ
 t = 0.001      # ステップサイズ（適切に選ばないと収束しにくいので注意）
 num_iterations = 100  # 反復回数
 # ISTAを実行
